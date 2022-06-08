@@ -11,37 +11,37 @@ cwd = os.path.dirname(os.path.realpath(__file__))
 version = "1.0.0"
 config_load = False
 
-try: 
-    # Load config files
-    config_path = f"{cwd}/config.yaml"
-    backup_config = f"{cwd}/backup.yaml"
-    config = fct.read_yaml(config_path)
-    t_config = config["target"]
-    r_config = config["ref"]
-
-
-    # Connecting to worksheets
-    sa = gspread.service_account()
-    t = sa.open(t_config["book"])
-    t_wks = t.worksheet(t_config["sheet"])
-
-    r = sa.open(r_config["book"])
-    r_wks = r.worksheet(r_config["sheet"])
-
-    r_start = r_config["index"]
-    r_stop = fct.next_available_row(r_wks)
-    t_start = t_config["index"] + 1
-    t_stop = fct.next_available_row(t_wks)
-    ticks = r_stop - r_start
-
-    config_load = True
-except KeyError:
-    print("There was an error loading the configuration file.")
-except FileNotFoundError:
-    print("The configuration file was not found.")
-
 
 def main():
+    try: 
+        # Load config files
+        config_path = f"{cwd}/config.yaml"
+        backup_config = f"{cwd}/backup.yaml"
+        config = fct.read_yaml(config_path)
+        t_config = config["target"]
+        r_config = config["ref"]
+
+
+        # Connecting to worksheets
+        sa = gspread.service_account()
+        t = sa.open(t_config["book"])
+        t_wks = t.worksheet(t_config["sheet"])
+
+        r = sa.open(r_config["book"])
+        r_wks = r.worksheet(r_config["sheet"])
+
+        r_start = r_config["index"]
+        r_stop = fct.next_available_row(r_wks)
+        t_start = t_config["index"]
+        t_stop = fct.next_available_row(t_wks)
+        ticks = r_stop - r_start
+
+        config_load = True
+    except KeyError:
+        print("There was an error loading the configuration file.")
+    except FileNotFoundError:
+        print("The configuration file was not found.")
+
     if config_load:
         # Salutations message
         fct.salutations(version)
